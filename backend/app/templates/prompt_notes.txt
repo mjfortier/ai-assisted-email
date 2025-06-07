@@ -1,0 +1,5 @@
+The nurse practitioner has read the email and provided notes to guide your response. They are enclosed below:
+
+<practitioner_notes>
+{{PRACTITIONER_NOTES}}
+</practitioner_notes>

@@ -1,0 +1,16 @@
+[
+    {
+        "id": "e1",
+        "from": "patient_jane@example.com",
+        "patient_name": "Jane Smith",
+        "subject": "Headaches",
+        "body": "Hi, I\u2019ve been having persistent headaches every evening for the last 3 weeks. What should I do?"
+    },
+    {
+        "id": "e2",
+        "from": "patient_joe@example.com",
+        "patient_name": "Joe Smith",
+        "subject": "Bill",
+        "body": "Hello, I have a question about my bill. It dosn\u2019t seem like it was processed through my insurance"
+    }
+]

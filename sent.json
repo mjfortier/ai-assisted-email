@@ -1,0 +1,14 @@
+[
+    {
+        "to": "sample@hii.c",
+        "subject": "Sample Email 2",
+        "body": "This is a sample email body 2.",
+        "id": "1"
+    },
+    {
+        "to": "sample@hii.c",
+        "body": "This is a sample email body 3.",
+        "subject": "No Subject",
+        "id": "2"
+    }
+]
