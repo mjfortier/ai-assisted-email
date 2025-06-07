@@ -33,9 +33,22 @@ def get_emails() -> list[dict]:
     return emails
 
 
+def _get_replies(email_id: str) -> list[dict]:
+    """
+    Retrieves replies to a specific email by its ID.
+    """
+    with open('sent.json', 'r') as file:
+        sent_emails = json.load(file)
+    
+    replies = [email for email in sent_emails if email.get('parent') == email_id]
+    logger.debug(f'Found {len(replies)} replies for email ID: {email_id}')
+    
+    return replies
+
+
 def get_email_by_id(email_id: str) -> dict | None:
     """
-    Retrieves a specific email by its ID.
+    Retrieves a specific email by its ID. Also retrieves replies if they exist.
     """
     if email_id is None or len(email_id) == 0:
         raise AttributeError('No email ID provided')
@@ -44,15 +57,17 @@ def get_email_by_id(email_id: str) -> dict | None:
     with open('emails.json', 'r') as file:
         emails = json.load(file)
     
+    # Dirty loop since we're storing in JSON
     for email in emails:
         if email.get('id') == email_id:
             logger.debug(f'Found email with ID: {email_id}')
+            email['replies'] = _get_replies(email_id)
             return email
     logger.warning(f'Email with ID: {email_id} not found.')
     return None
         
 
-def create_email(email: dict) -> dict:
+def create_reply(email: dict, email_id: str) -> dict:
     """
     Creates a new email and appends it to the JSON file.
 
@@ -67,6 +82,8 @@ def create_email(email: dict) -> dict:
     if email.get("subject", None) is None:
         email["subject"] = "No Subject"
     
+    email['parent'] = email_id
+    
     with open('sent.json', 'r+') as file:
         sent_emails = json.load(file)
         email['id'] = str(len(sent_emails) + 1)
@@ -76,6 +93,16 @@ def create_email(email: dict) -> dict:
     
     logger.info(f'Created new email with ID: {email["id"]}')
     return {'success': True, 'id': email['id']}
+
+
+def _format_reply(reply: str, email: dict) -> str:
+    match = re.search(r"<response_email>(.*?)</response_email>", reply, re.DOTALL).group(1)
+    
+    return match.strip().strip('\n') \
+              .replace('[patient_name]', email.get('patient_name', 'Patient')) \
+              .replace('[nurse_name]', 'Nurse Ratchet, NP') \
+              .replace('[office_name]', 'Sunrise Medical Clinic') \
+              .replace('[contact_information]', '123-456-7890')
 
 
 def draft_ai_response(body: dict) -> dict:
@@ -102,5 +129,11 @@ def draft_ai_response(body: dict) -> dict:
             {"role": "user", "content": prompt}
         ]
     )
+    return {'reply': _format_reply(response.content[0].text, body['email'])}
 
-    return response
+
+def get_sent() -> list[dict]:
+    return []
+
+def get_sent_by_id(sent_id: str) -> dict | None:
+    return {}

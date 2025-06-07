@@ -1,9 +1,18 @@
 from fastapi import FastAPI, HTTPException
-from .email_store import get_emails, get_email_by_id, create_email, draft_ai_response
+from fastapi.middleware.cors import CORSMiddleware
+from .email_store import get_emails, get_email_by_id, create_reply, draft_ai_response, get_sent, get_sent_by_id
 import logging
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/emails")
@@ -14,7 +23,7 @@ def index_emails():
         logger.error(f'Error retrieving email list: {e}')
         raise HTTPException(status_code=500, detail='Failed to retrieve email list') from e
     
-    return {'data': emails}
+    return emails
 
 
 @app.get("/emails/{email_id}")
@@ -30,13 +39,40 @@ def get_email(email_id: str):
     if email is None:
         raise HTTPException(status_code=404, detail='Email not found')
     
-    return {'data': email}
+    return email
 
 
-@app.post("/emails")
-def post_email(body: dict):
+@app.get("/sent")
+def index_sent():
     try:
-        create_email(body)
+        emails = get_sent()
+    except Exception as e:
+        logger.error(f'Error retrieving email list: {e}')
+        raise HTTPException(status_code=500, detail='Failed to retrieve email list') from e
+    
+    return emails
+
+
+@app.get("/sent/{sent_id}")
+def index_sent(sent_id: str):
+    try:
+        email = get_sent_by_id(sent_id)
+    except ValueError as ve:
+        logger.error(f'Invalid email ID provided: {ve}')
+        raise HTTPException(status_code=400, detail='Invalid sent email ID') from ve
+    except Exception as e:
+        logger.error(f'Error retrieving email with ID {sent_id}: {e}')
+        raise HTTPException(status_code=500, detail='Failed to retrieve sent email')
+    if email is None:
+        raise HTTPException(status_code=404, detail='Sent email not found')
+    
+    return email
+
+
+@app.post("/emails/{email_id}/reply")
+def post_email(body: dict, email_id: str):
+    try:
+        create_reply(body, email_id)
     except ValueError as ve:
         logger.error(f'Invalid email data: {body}')
         raise HTTPException(status_code=400, detail='Invalid email data') from ve
@@ -47,7 +83,7 @@ def post_email(body: dict):
     return {'success': True}
 
 
-@app.post("/ai_email_drafting")
+@app.post("/generate-reply")
 def post_ai_email_drafting(body: dict):
     try:
         response = draft_ai_response(body)

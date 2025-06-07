@@ -1,14 +1,9 @@
 [
     {
-        "to": "sample@hii.c",
-        "subject": "Sample Email 2",
-        "body": "This is a sample email body 2.",
+        "to": "patient_jane@example.com",
+        "subject": "Re: Headaches",
+        "body": "Dear Jane Smith,\n\nThank you for reaching out to our office regarding your headache concerns. I understand how troubling it can be to experience persistent headaches, especially when they occur regularly over an extended period.\n\nHeadaches that persist for several weeks, particularly when they follow a consistent pattern like occurring every evening, warrant proper medical evaluation to determine the underlying cause and develop an appropriate treatment plan.\n\nI would strongly recommend scheduling an appointment with our office so we can conduct a thorough assessment of your symptoms. During your visit, we'll be able to discuss the characteristics of your headaches, review your medical history, and determine if any additional evaluation or treatment is needed.\n\nPlease call our office at your earliest convenience to schedule an appointment. In the meantime, try to keep track of any potential triggers, such as stress, diet, sleep patterns, or activities that might be associated with your headaches, as this information will be helpful during your visit.\n\nIf you experience any severe headaches, sudden changes in your symptoms, or other concerning symptoms, please contact us immediately or seek urgent medical care.\n\nBest regards,\n\nNurse Ratchet, NP\nSunrise Medical Clinic\n123-456-7890",
+        "parent": "e1",
         "id": "1"
-    },
-    {
-        "to": "sample@hii.c",
-        "body": "This is a sample email body 3.",
-        "subject": "No Subject",
-        "id": "2"
     }
 ]
