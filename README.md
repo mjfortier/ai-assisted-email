@@ -27,7 +27,9 @@ cd ..
 
 ### Running the Application
 
-Run the backend with:
+First, you will need to set up the environment variables using a `.env` file in the root directory of the repository. A `.env.example` file is provided; it must contain a valid api key for Anthropic and specify the desired model.
+
+Once you have the environment variables set up, run the backend with:
 ```bash
 uvicorn backend.app.main:app --reload
 ```
