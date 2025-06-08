@@ -12,5 +12,19 @@
         "patient_name": "Joe Smith",
         "subject": "Bill",
         "body": "Hello, I have a question about my bill. It dosn\u2019t seem like it was processed through my insurance"
+    },
+    {
+        "id": "e3",
+        "from": "patient_amelie@example.com",
+        "patient_name": "Amelie Johnson",
+        "subject": "Med clarification",
+        "body": "Hi there!\nI have a question about the beta blocker I was prescribed. I\u2019m not sure if I'm supposed to take it in the morning or at night. Can you clarify?"
+    },
+    {
+        "id": "e4",
+        "from": "patient_giuseppe@example.com",
+        "patient_name": "Giuseppe Rossi",
+        "subject": "Cough not going away",
+        "body": "Hello\n\nThis cough I saw you about last week is still not going away. I\u2019ve been taking the cough syrup you prescribed, but it doesn\u2019t seem to be helping. What should I do next?"
     }
 ]

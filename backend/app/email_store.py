@@ -50,8 +50,7 @@ def get_email_by_id(email_id: str) -> dict | None:
     """
     Retrieves a specific email by its ID. Also retrieves replies if they exist.
     """
-    if email_id is None or len(email_id) == 0:
-        raise AttributeError('No email ID provided')
+    assert len(email_id) > 0, 'Email ID must be a non-empty string'
     
     logger.debug(f'Retrieving email with ID: {email_id}')
     with open('emails.json', 'r') as file:
@@ -75,9 +74,8 @@ def create_reply(email: dict, email_id: str) -> dict:
     assume there would be another service responsible for managing patient data.
     Also not including date/time as this would typically be handled by the database.
     """
-    if not _is_valid_email(email.get("to", None)) \
-       or len(email.get("body", "")) == 0:
-        raise ValueError('Invalid email data')
+    assert _is_valid_email(email.get("to", None)), 'Invalid email address'
+    assert len(email.get("body", "")) > 0, 'Email body cannot be empty'
     
     if email.get("subject", None) is None:
         email["subject"] = "No Subject"
@@ -130,10 +128,3 @@ def draft_ai_response(body: dict) -> dict:
         ]
     )
     return {'reply': _format_reply(response.content[0].text, body['email'])}
-
-
-def get_sent() -> list[dict]:
-    return []
-
-def get_sent_by_id(sent_id: str) -> dict | None:
-    return {}

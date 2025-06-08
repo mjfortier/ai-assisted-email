@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from .email_store import get_emails, get_email_by_id, create_reply, draft_ai_response, get_sent, get_sent_by_id
+from .email_store import get_emails, get_email_by_id, create_reply, draft_ai_response
 import logging
 logger = logging.getLogger(__name__)
 
@@ -30,9 +30,9 @@ def index_emails():
 def get_email(email_id: str):
     try:
         email = get_email_by_id(email_id)
-    except ValueError as ve:
-        logger.error(f'Invalid email ID provided: {ve}')
-        raise HTTPException(status_code=400, detail='Invalid email ID') from ve
+    except AssertionError as ae:
+        logger.error(f'Invalid email ID provided: {ae}')
+        raise HTTPException(status_code=400, detail='Invalid email ID') from ae
     except Exception as e:
         logger.error(f'Error retrieving email with ID {email_id}: {e}')
         raise HTTPException(status_code=500, detail='Failed to retrieve email')
@@ -42,40 +42,13 @@ def get_email(email_id: str):
     return email
 
 
-@app.get("/sent")
-def index_sent():
-    try:
-        emails = get_sent()
-    except Exception as e:
-        logger.error(f'Error retrieving email list: {e}')
-        raise HTTPException(status_code=500, detail='Failed to retrieve email list') from e
-    
-    return emails
-
-
-@app.get("/sent/{sent_id}")
-def index_sent(sent_id: str):
-    try:
-        email = get_sent_by_id(sent_id)
-    except ValueError as ve:
-        logger.error(f'Invalid email ID provided: {ve}')
-        raise HTTPException(status_code=400, detail='Invalid sent email ID') from ve
-    except Exception as e:
-        logger.error(f'Error retrieving email with ID {sent_id}: {e}')
-        raise HTTPException(status_code=500, detail='Failed to retrieve sent email')
-    if email is None:
-        raise HTTPException(status_code=404, detail='Sent email not found')
-    
-    return email
-
-
 @app.post("/emails/{email_id}/reply")
 def post_email(body: dict, email_id: str):
     try:
         create_reply(body, email_id)
-    except ValueError as ve:
-        logger.error(f'Invalid email data: {body}')
-        raise HTTPException(status_code=400, detail='Invalid email data') from ve
+    except AssertionError as ae:
+        logger.error(f'Assertion error in reply creation: {body}')
+        raise HTTPException(status_code=400, detail='Invalid email data') from ae
     except Exception as e:
         logger.error(f'Error creating email: {e}')
         raise HTTPException(status_code=500, detail='Failed to create email') from e

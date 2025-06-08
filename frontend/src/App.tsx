@@ -17,12 +17,17 @@ function App() {
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/emails`)
-      .then(res => res.json())
-      .then(data => {
-        setEmails(data as EmailPart[]|| []);
-        setSelectedEmail(null);
-      });
+    if (selectedMailbox === "trash") {
+      setEmails([]);
+      setSelectedEmail(null);
+    } else {
+      fetch(`http://localhost:8000/emails`)
+        .then(res => res.json())
+        .then(data => {
+          setEmails(data as EmailPart[]|| []);
+          setSelectedEmail(null);
+        });
+      }
   }, [selectedMailbox]);
 
   const handleSelectEmail = (email: EmailPart) => {
@@ -37,6 +42,7 @@ function App() {
 
   return (
     <div className="flex h-screen w-screen">
+
       {/* Left: Mailbox selector */}
       <div className="w-1/6 bg-zinc-100 p-4 border-r border-zinc-400">
         <h2 className="font-bold mb-4 text-zinc-500">Mailboxes</h2>
@@ -56,7 +62,7 @@ function App() {
 
       {/* Middle: Email list */}
       <div className="w-1/4 p-4 border-r border-zinc-400 overflow-y-auto bg-zinc-50">
-        <h2 className="font-bold mb-4 text-zinc-300 capitalize">{selectedMailbox}</h2>
+        <h2 className="font-bold mb-4 text-zinc-500 capitalize">{selectedMailbox}</h2>
         {emails.map(email => (
           <div
             key={email.id}

@@ -11,6 +11,8 @@ export default function EmailDetail({ email, refreshEmail }: Props) {
 
   const [replyDraft, setReplyDraft] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showNotesModal, setShowNotesModal] = useState(false);
+  const [notes, setNotes] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const animateReply = (text: string, delay = 3) => {
@@ -24,7 +26,13 @@ export default function EmailDetail({ email, refreshEmail }: Props) {
     type();
   };
 
-  const handleAutoDraft = async () => {
+  const handleAutoDraft = () => {
+    setNotes("");
+    setShowNotesModal(true);
+  };
+
+  const handleSubmitNotes = async () => {
+    setShowNotesModal(false);
     setLoading(true);
     try {
       const res = await fetch("http://localhost:8000/generate-reply", {
@@ -34,10 +42,10 @@ export default function EmailDetail({ email, refreshEmail }: Props) {
         },
         body: JSON.stringify({
           email: email,
-          practitioners_notes: ''
+          practitioner_notes: notes
         })
       });
-
+      setReplyDraft(""); // Clear previous draft
       const data = await res.json();
       const reply = data.data.reply || "No reply generated.";
       animateReply(reply);
@@ -124,14 +132,14 @@ export default function EmailDetail({ email, refreshEmail }: Props) {
       {/* Buttons for auto-draft and send */}
       <div className="mb-2 flex gap-2">
         <button
-          className={`bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ${loading ? "animate-pulse" : ""}`}
+          className={`bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 ${loading ? "animate-pulse" : ""}`}
           onClick={handleAutoDraft}
           disabled={loading}
         >
           {loading ? "Generating..." : "Auto-draft reply"}
         </button>
         <button
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50"
+          className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 disabled:opacity-50"
           onClick={handleSend}
           disabled={!replyDraft.trim()}
         >
@@ -148,6 +156,38 @@ export default function EmailDetail({ email, refreshEmail }: Props) {
         onChange={handleReplyChange}
         rows={1}
       />
+
+      {/* Notes Modal */}
+      {showNotesModal && (
+        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+          <div className="bg-white rounded shadow-lg p-6 w-full max-w-md mb-128">
+            <h2 className="text-lg font-semibold mb-2">Add clinician notes (optional)</h2>
+            <textarea
+              className="w-full border border-gray-300 rounded p-2 mb-4"
+              rows={4}
+              placeholder="Type any notes or instructions to guide the AI in generating the reply..."
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                onClick={() => setShowNotesModal(false)}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                onClick={handleSubmitNotes}
+                disabled={loading}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
