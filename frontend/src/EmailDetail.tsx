@@ -147,7 +147,7 @@ export default function EmailDetail({ email, refreshEmail }: Props) {
         </button>
       </div>
 
-      {/* Reply Textarea */}
+      {/* Reply text area */}
       <textarea
         ref={textareaRef}
         className="w-full p-2 border border-gray-300 rounded resize-none overflow-hidden focus:outline-none focus:ring focus:border-blue-300"
